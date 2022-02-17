@@ -1,2 +1,2 @@
 ,Avg_MAE,avg_MAE_Mask,avg_MSE,avg_SSIM,avg_PSNR
-0,tensor(2.2172),tensor(23.5769),tensor(0.0619),"tensor(0.0023, dtype=torch.float64)","tensor(4.6477, dtype=torch.float64)"
+0,0.921,9.8531,0.0056,0.9697,34.9719
