@@ -81,8 +81,13 @@ class LitModelLongitudinal(pl.LightningModule):
                 kfold_num=self.hparams.kfold_num,
                 num_rep=self.hparams.num_rep,
             )
+        # Need kfold_num and rep_num to save the model checkpoint
+        kfold_num = torch.as_tensor(self.hparams.kfold_num, dtype=torch.float)
+        num_rep = torch.as_tensor(self.hparams.num_rep, dtype=torch.float)
         self.log("train_loss", loss, sync_dist=True, on_step=True, on_epoch=True)
-        return {"loss": loss}
+        self.log("k_fold", kfold_num.to(device), sync_dist=True, on_step=True, on_epoch=True)
+        self.log("num_rep", num_rep.to(device), sync_dist=True, on_step=True, on_epoch=True)
+        return {"loss": loss,"k_fold": kfold_num, "num_rep": num_rep}
     
     def training_epoch_end(self, training_step_outputs):
         average_train_mae = torch.mean(
@@ -90,6 +95,16 @@ class LitModelLongitudinal(pl.LightningModule):
         )
         self.log("train_loss", average_train_mae.to(device), sync_dist=True, on_step=False, on_epoch=True)
         print(f"Mean absolute error on whole train image: {average_train_mae}")
+        average_k_fold = torch.mean(
+            torch.as_tensor([training_step_output["k_fold"].to(device) for training_step_output in training_step_outputs])
+        )
+        self.log("k_fold", average_k_fold.to(device))
+        print(f"K_Fold: {average_k_fold}")
+        average_num_rep = torch.mean(
+            torch.as_tensor([training_step_output["num_rep"].to(device) for training_step_output in training_step_outputs])
+        )
+        self.log("num_rep", average_num_rep.to(device))
+        print(f"Num_Rep: {average_num_rep}")
 
     def validation_step(self, batch, batch_idx: int):
         inputs, targets = batch
@@ -247,14 +262,14 @@ class LitModelLongitudinal(pl.LightningModule):
         print(f"PSNR on whole test image: {average_psnr}")
 
         # Creating dataframe to save in the test_accuracy folder
-        df = pd.DataFrame({'Avg_MAE': average_mae,
-        "avg_MAE_Mask": average_mae_mask,
-        "avg_MSE": average_mse,
-        "avg_SSIM": average_ssim,
-        "avg_PSNR": average_psnr,}, index=[0])
+        df = pd.DataFrame({'Avg_MAE': average_mae.cpu().detach().numpy(),
+        "avg_MAE_Mask": average_mae_mask.cpu().detach().numpy(),
+        "avg_MSE": average_mse.cpu().detach().numpy(),
+        "avg_SSIM": average_ssim.cpu().detach().numpy(),
+        "avg_PSNR": average_psnr.cpu().detach().numpy(),}, index=[0])
         filename = f"k_{self.hparams.kfold_num}_rep_{self.hparams.num_rep}_result.csv"
         outfile = TEST_ACCURACY / filename
-        df.to_csv(outfile)
+        df.to_csv(outfile, float_format='%.4f')
 
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(

@@ -1,7 +1,6 @@
 import os
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
-import numpy as np
 
 import pytorch_lightning as pl
 from pytorch_lightning import Trainer, loggers
@@ -22,7 +21,7 @@ def main(hparams: Namespace) -> None:
         default_root_dir = cur_path
         checkpoint_file = (
             Path(__file__).resolve().parent
-            / "checkpoint/{epoch}-{train_loss:0.5f}"  # noqa
+            / "checkpoint/{epoch}-{train_loss:0.5f}-{k_fold}-{num_rep}"  # noqa
         )
         if not os.path.exists(Path(__file__).resolve().parent / "checkpoint"):
             os.mkdir(Path(__file__).resolve().parent / "checkpoint")
@@ -33,7 +32,7 @@ def main(hparams: Namespace) -> None:
         checkpoint_file = Path("./log/checkpoint")
         if not os.path.exists(checkpoint_file):
             os.mkdir(checkpoint_file)
-        checkpoint_file = checkpoint_file / "{epoch}-{train_loss:0.5f}"
+        checkpoint_file = checkpoint_file / "{epoch}-{train_loss:0.5f}-{k_fold}-{num_rep}"
 
     ckpt_path = (
         str(Path(__file__).resolve().parent / "checkpoint" / hparams.checkpoint_file)
@@ -56,7 +55,7 @@ def main(hparams: Namespace) -> None:
     # training
     trainer = Trainer(
         gpus=hparams.gpus,
-        # distributed_backend="ddp",
+        distributed_backend="ddp",
         fast_dev_run=hparams.fast_dev_run,
         checkpoint_callback=checkpoint_callback,
         callbacks=[
@@ -68,6 +67,7 @@ def main(hparams: Namespace) -> None:
         logger=tb_logger,
         max_epochs=230,
         # auto_scale_batch_size="binsearch", # for auto scaling of batch size
+        progress_bar_refresh_rate=0
     )
 
     if hparams.task == "longitudinal":
@@ -79,7 +79,7 @@ def main(hparams: Namespace) -> None:
     trainer.fit(model, data_module)
 
     trainer = Trainer(gpus=hparams.gpus, 
-    # distributed_backend="ddp"
+    distributed_backend="ddp"
     )
     trainer.test(
         model=model,
@@ -95,8 +95,8 @@ if __name__ == "__main__":  # pragma: no cover
     parser.add_argument(
         "--tensor_board_logger",
         dest="TensorBoardLogger",
-        # default="/home/x2020fpt/projects/def-jlevman/x2020fpt/rUnet_CC",
-        default="/home/mostafiz/desktop/rUnet_CC",
+        default="/home/x2020fpt/projects/def-jlevman/x2020fpt/rUnet_CC",
+        # default="/home/mostafiz/desktop/rUnet_CC",
         help="TensorBoardLogger dir",
     )
     parser.add_argument(
