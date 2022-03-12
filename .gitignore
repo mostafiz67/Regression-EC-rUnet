@@ -10,6 +10,7 @@ __pycache__/
 *.npz
 *.tar.gz
 *.zip
+*.png
 
 # C extensions
 *.so
@@ -140,6 +141,6 @@ mypy.ini
 isort.cfg
 
 # seed project
-# lightning_logs/
+lightning_logs/
 MNIST
 .DS_Store

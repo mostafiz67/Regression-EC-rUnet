@@ -1,5 +1,7 @@
 import os
 from pathlib import Path
+from typing import List
+from typing_extensions import Literal
 
 # flake8: noqa
 # Use environment variables to auto-detect whether we are running an a Compute Canada cluster:
@@ -38,5 +40,10 @@ TEST_ACCURACY = ROOT / "test_accuracy"
 TEST_FIGURES = ROOT / "test_figures"
 TEST_PREDICTION = ROOT / "test_prediction"
 
+PARAMETRIC_MAP = ROOT / "parametric_map"
+
 IMAGESIZE = 128
 ADNI_LIST = [ADNI_M24, ADNI_M12, ADNI_M06, ADNI_SC]
+ECMethod = Literal["ratio", "ratio-diff", "ratio-signed", "ratio-diff-signed", "intersection_union_voxel", "intersection_union_all"]
+EC_METHODS: List[ECMethod] = ["ratio", "ratio-diff", "ratio-signed", "ratio-diff-signed", "intersection_union_voxel", "intersection_union_all"]
+
