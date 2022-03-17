@@ -36,7 +36,7 @@ def regression_ec(residuals: List[ndarray], method: ECMethod) -> List[ndarray]:
             choice_numerator = [np.minimum(r1, r2), np.zeros(len(r1))]
             choice_denominator = [np.maximum(r1, r2), -np.add(r1,r2)]
             numerator = np.select(conditions, choice_numerator)
-            denominator = np.select(conditions, choice_denominator)
+            denominator = np.select(conditions, choice_denominator, np.add(np.abs(r1), np.abs(r2)))
             consistency = np.divide(numerator, denominator)
             consistency[np.isnan(consistency)] = 1
         elif method =="intersection_union_all":
@@ -44,7 +44,7 @@ def regression_ec(residuals: List[ndarray], method: ECMethod) -> List[ndarray]:
             choice_numerator = [np.minimum(r1, r2), np.zeros(len(r1))]
             choice_denominator = [np.maximum(r1, r2), -np.add(r1,r2)]
             numerator = np.select(conditions, choice_numerator)
-            denominator = np.select(conditions, choice_denominator)
+            denominator = np.select(conditions, choice_denominator, np.add(np.abs(r1), np.abs(r2)))
             consistency = np.divide(np.sum(numerator), np.sum(denominator)) # all sum and then divide
             consistency = np.nan_to_num(consistency, copy=True, nan=1.0)
         else:
