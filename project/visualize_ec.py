@@ -7,7 +7,7 @@ import numpy as np
 import torch
 from matplotlib.pyplot import Figure
 from numpy import ndarray
-# from utils.const import PARAMETRIC_MAP
+from utils.const import PARAMETRIC_MAP
 
 
 def make_imgs(img: ndarray, imin: Any = None, imax: Any = None) -> ndarray:
@@ -15,8 +15,9 @@ def make_imgs(img: ndarray, imin: Any = None, imax: Any = None) -> ndarray:
     image with masked regions shown in transparent blue."""
     imin = img.min() if imin is None else imin
     imax = img.max() if imax is None else imax
-    scaled = np.array(((img - imin) / (imax - imin)) * 255, dtype=int)  # img
+    # scaled = np.array(((img - imin) / (imax - imin)) * 255, dtype=int)  # img
     # scaled = np.array(img * 255, dtype=int)
+    scaled = img
     return scaled
 
 class BrainSlices:
@@ -83,7 +84,7 @@ class BrainSlices:
                 elif i ==4:
                     axis.set_title(self.title[4])
         plt.tight_layout(pad=3,h_pad=0.0, w_pad=0.1) # plt.tight_layout(pad=3, h_pad=0.0, w_pad=0.1)
-        fig.suptitle('Parametric map images from EC metrics (Subject-7)', fontsize=20)
+        fig.suptitle('Parametric map images from EC metrics (Subject-1)', fontsize=17)
         return fig
 
     def plot_row(self, slices: List, axes: Tuple[Any, Any, Any]) -> None:
@@ -91,7 +92,7 @@ class BrainSlices:
             imgs = [img for img in slice_]
             imgs = np.concatenate(imgs, axis=1)
 
-            axis.imshow(imgs, cmap="bone", alpha=0.8, vmin=0, vmax=255)
+            axis.imshow(imgs, cmap="bone", alpha=0.8, vmin=0, vmax=1) # If raw then vmax=1; if scaled then vmax=255
             axis.grid(False)
             axis.invert_xaxis()
             axis.invert_yaxis()
@@ -116,16 +117,18 @@ def generate_fig(
 
     fig = brainSlice.plot()
 
-    filename = f"ec_method_image_sub_7.png"
-    # outfile = PARAMETRIC_MAP / filename
-    fig.savefig(filename)
-    fig.savefig('ec_method_image_sub_7.pdf', dpi=120, format='pdf', bbox_inches='tight')
+    filename = f"ec_method_image_sub_1_raw.png"
+    outfile = PARAMETRIC_MAP / filename
+    fig.savefig(outfile)
+    filename = f'ec_method_image_sub_1_raw.pdf'
+    outfile = PARAMETRIC_MAP / filename
+    fig.savefig(outfile, dpi=120, format='pdf', bbox_inches='tight')
     plt.close()
 
 
 if __name__ == "__main__":
 
-    with np.load("/home/mostafiz/Desktop/rUnet_CC/test_prediction/all_method_ec_subject_6.npz") as data:
+    with np.load("/home/mostafiz/Desktop/rUnet_CC/test_prediction/all_method_ec_subject_0.npz") as data:
         ratio_ec_data = data['ratio']
         ratio_diff_ec_data = data['ratio_diff']
         ratio_sign_ec_data = data['ratio_sign']
