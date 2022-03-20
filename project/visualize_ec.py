@@ -7,7 +7,7 @@ import numpy as np
 import torch
 from matplotlib.pyplot import Figure
 from numpy import ndarray
-from utils.const import PARAMETRIC_MAP
+from utils.const import PARAMETRIC_MAP, TEST_PREDICTION
 
 
 def make_imgs(img: ndarray, imin: Any = None, imax: Any = None) -> ndarray:
@@ -15,9 +15,9 @@ def make_imgs(img: ndarray, imin: Any = None, imax: Any = None) -> ndarray:
     image with masked regions shown in transparent blue."""
     imin = img.min() if imin is None else imin
     imax = img.max() if imax is None else imax
-    # scaled = np.array(((img - imin) / (imax - imin)) * 255, dtype=int)  # img
+    scaled = np.array(((img - imin) / (imax - imin)) * 255, dtype=int)  # img
     # scaled = np.array(img * 255, dtype=int)
-    scaled = img
+    # scaled = img
     return scaled
 
 class BrainSlices:
@@ -27,13 +27,15 @@ class BrainSlices:
         ratio_diff_ec_data: ndarray,
         ratio_sign_ec_data: ndarray,
         ratio_diff_sign_ec_data: ndarray,
-        inter_union_vox_ec_data: ndarray
+        inter_union_vox_ec_data: ndarray,
+        subject: int,
     ):
         self.fig_data_1_img: ndarray = make_imgs(ratio_ec_data)
         self.fig_data_2_img: ndarray = make_imgs(ratio_diff_ec_data)
         self.fig_data_3_img: ndarray = make_imgs(ratio_sign_ec_data)
         self.fig_data_4_img: ndarray = make_imgs(ratio_diff_sign_ec_data)
         self.fig_data_5_img: ndarray = make_imgs(inter_union_vox_ec_data)
+        self.subject: int = subject
 
         si, sj, sk = 128, 128, 128
         i = si // 2
@@ -84,7 +86,7 @@ class BrainSlices:
                 elif i ==4:
                     axis.set_title(self.title[4])
         plt.tight_layout(pad=3,h_pad=0.0, w_pad=0.1) # plt.tight_layout(pad=3, h_pad=0.0, w_pad=0.1)
-        fig.suptitle('Parametric map images from EC metrics (Subject-1)', fontsize=17)
+        fig.suptitle(f'Parametric map images from EC metrics (Subject-{self.subject})', fontsize=16)
         return fig
 
     def plot_row(self, slices: List, axes: Tuple[Any, Any, Any]) -> None:
@@ -92,7 +94,7 @@ class BrainSlices:
             imgs = [img for img in slice_]
             imgs = np.concatenate(imgs, axis=1)
 
-            axis.imshow(imgs, cmap="bone", alpha=0.8, vmin=0, vmax=1) # If raw then vmax=1; if scaled then vmax=255
+            axis.imshow(imgs, cmap="bone", alpha=0.8, vmin=0, vmax=255) # If raw then vmax=1; if scaled then vmax=255
             axis.grid(False)
             axis.invert_xaxis()
             axis.invert_yaxis()
@@ -106,21 +108,23 @@ def generate_fig(
     ratio_sign_ec_data: Union[ndarray, ndarray],
     ratio_diff_sign_ec_data: Union[ndarray, ndarray],
     inter_union_vox_ec_data: Union[ndarray, ndarray],
+    subject: int,
 ) -> None:
     brainSlice = BrainSlices(
         ratio_ec_data,
         ratio_diff_ec_data,
         ratio_sign_ec_data,
         ratio_diff_sign_ec_data,
-        inter_union_vox_ec_data
+        inter_union_vox_ec_data,
+        subject,
     )
 
     fig = brainSlice.plot()
 
-    filename = f"ec_method_image_sub_1_raw.png"
+    filename = f"ec_method_image_sub_{subject}_raw.png"
     outfile = PARAMETRIC_MAP / filename
     fig.savefig(outfile)
-    filename = f'ec_method_image_sub_1_raw.pdf'
+    filename = f'ec_method_image_sub_{subject}_raw.pdf'
     outfile = PARAMETRIC_MAP / filename
     fig.savefig(outfile, dpi=120, format='pdf', bbox_inches='tight')
     plt.close()
@@ -128,10 +132,16 @@ def generate_fig(
 
 if __name__ == "__main__":
 
-    with np.load("/home/mostafiz/Desktop/rUnet_CC/test_prediction/all_method_ec_subject_0.npz") as data:
-        ratio_ec_data = data['ratio']
-        ratio_diff_ec_data = data['ratio_diff']
-        ratio_sign_ec_data = data['ratio_sign']
-        ratio_diff_sign_ec_data = data['ratio_diff_sign']
-        inter_union_vox_ec_data = data['inter_union_vox']
-    generate_fig(ratio_ec_data, ratio_diff_ec_data, ratio_sign_ec_data, ratio_diff_sign_ec_data, inter_union_vox_ec_data)
+    for subject in range(0, 7):
+        filename = f"all_method_ec_subject_{subject}.npz"
+        filepath = TEST_PREDICTION / filename
+
+        with np.load(filepath) as data:
+            ratio_ec_data = data['ratio']
+            ratio_diff_ec_data = data['ratio_diff']
+            ratio_sign_ec_data = data['ratio_sign']
+            ratio_diff_sign_ec_data = data['ratio_diff_sign']
+            inter_union_vox_ec_data = data['inter_union_vox']
+        generate_fig(ratio_ec_data, ratio_diff_ec_data, ratio_sign_ec_data, ratio_diff_sign_ec_data, 
+        inter_union_vox_ec_data,
+        subject=subject)

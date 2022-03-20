@@ -14,7 +14,7 @@ from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 def main(hparams: Namespace) -> None:
     # Function that sets seed for pseudo-random number generators in: pytorch, numpy,
     # python.random and sets PYTHONHASHSEED environment variable.
-    pl.seed_everything(42)
+    pl.seed_everything(hparams.seed)
 
     if COMPUTECANADA:
         cur_path = Path(__file__).resolve().parent
@@ -113,6 +113,7 @@ if __name__ == "__main__":  # pragma: no cover
     parser.add_argument("--in_channels", type=int, default=288)
     parser.add_argument("--kfold_num", type=int, choices=[1, 2, 3, 4, 5], default=1)
     parser.add_argument("--num_rep", type=int, choices=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], default=1)
+    parser.add_argument("--seed", type=int, choices=[41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57], default=42)
     parser.add_argument(
         "--task",
         type=str,
