@@ -44,8 +44,6 @@ PARAMETRIC_MAP = ROOT / "parametric_map"
 
 IMAGESIZE = 128
 ADNI_LIST = [ADNI_M24, ADNI_M12, ADNI_M06, ADNI_SC]
-ECMethod = Literal["ratio", "ratio-diff", "ratio-signed", "ratio-diff-signed", 
-                    "intersection_union_voxel", "intersection_union_all", "intersection_union_distance"]
-EC_METHODS: List[ECMethod] = ["ratio", "ratio-diff", "ratio-signed", "ratio-diff-signed", 
-                            "intersection_union_voxel", "intersection_union_all", "intersection_union_distance"]
+ECMethod = Literal["ratio", "ratio-diff", "ratio-signed", "ratio-diff-signed", "intersection_union_voxel", "intersection_union_all"]
+EC_METHODS: List[ECMethod] = ["ratio", "ratio-diff", "ratio-signed", "ratio-diff-signed", "intersection_union_voxel", "intersection_union_all"]
 

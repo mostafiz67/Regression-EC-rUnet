@@ -47,10 +47,6 @@ def regression_ec(residuals: List[ndarray], method: ECMethod) -> List[ndarray]:
             denominator = np.select(conditions, choice_denominator, np.add(np.abs(r1), np.abs(r2)))
             consistency = np.divide(np.sum(numerator), np.sum(denominator)) # all sum and then divide
             consistency = np.nan_to_num(consistency, copy=True, nan=1.0)
-        elif method =="intersection_union_distance":
-            conditions = [(r1>=0)&(r2>=0), (r1<=0)&(r2<=0)]
-            choiceValue = [np.abs(np.subtract(np.abs(r1), np.abs(r2))), np.add(np.abs(r1), np.abs(r2))]
-            consistency = np.select(conditions, choiceValue, np.add(np.abs(r1), np.abs(r2)))
         else:
             raise ValueError("Invalid method")
         consistencies.append(consistency)
@@ -65,7 +61,7 @@ if __name__ == "__main__":
     # Collecting all residuals among folds and repetitetions for subject wise
     for subject in range(0, 7): # We have 7 subjects
         all_rep_residuals = []
-        for rep in range(1, 11): # we have 10 repetations
+        for rep in range(1, 24): # we have 23 repetations
             for k_fold in range(1, 6): # we have 5 folds
                 filename = f"k_{k_fold}_rep_{rep}_bat_{subject}_test.npz" 
                 outfile = TEST_PREDICTION / filename
@@ -79,7 +75,7 @@ if __name__ == "__main__":
 
 
     # Calcullating EC using different methods for subject wise
-    for subject in range(0, 7):
+    for subject in range(0, 1):
         # Reading all_residual_bat_1_test.npz file (dictionaly key = all_residual)
         filename = f"all_rep_residuals_bat_{subject}_test.npz"
         outfile = TEST_PREDICTION / filename
@@ -87,7 +83,7 @@ if __name__ == "__main__":
         all_rep_residuals = data["all_residual"]
         print(np.shape(all_rep_residuals))
 
-        for method in ["intersection_union_voxel", "intersection_union_all", "ratio", "ratio-diff", "ratio-signed", "ratio-diff-signed", "intersection_union_distance"]:
+        for method in ["intersection_union_voxel", "intersection_union_all", "ratio", "ratio-diff", "ratio-signed", "ratio-diff-signed"]:
             if method == "ratio":
                 ratio_ec = regression_ec(all_rep_residuals, 'ratio')
                 ratio_ec = np.array(ratio_ec).mean(axis=0)
@@ -109,26 +105,18 @@ if __name__ == "__main__":
                 inter_union_vox_ec = regression_ec(all_rep_residuals, 'intersection_union_voxel')
                 inter_union_vox_ec = np.array(inter_union_vox_ec, dtype=np.float32)
                 inter_union_vox_ec = np.array(inter_union_vox_ec).mean(axis=0)
-                # print(np.shape(inter_union_vox_ec), inter_union_vox_ec.dtype)
+                print(np.shape(inter_union_vox_ec), inter_union_vox_ec.dtype)
                 inter_union_vox_ec = inter_union_vox_ec.reshape(128, 128, 128)
             elif method == "intersection_union_all":
                 inter_union_all_ec = regression_ec(all_rep_residuals, 'intersection_union_all')
                 inter_union_all_ec = np.array(inter_union_all_ec, dtype=np.float32)
                 inter_union_all_ec_mean = np.array(inter_union_all_ec).mean() #axis=1, as this is only a 1D array
                 inter_union_all_ec_sd = np.array(inter_union_all_ec).std(ddof=1)
-                # print("----------Mean and SD---------", inter_union_all_ec_mean, inter_union_all_ec_sd)
-            elif method == "intersection_union_distance":
-                inter_union_distance_ec = regression_ec(all_rep_residuals, 'intersection_union_voxel')
-                inter_union_distance_ec = np.array(inter_union_distance_ec, dtype=np.float32)
-                inter_union_distance_ec = np.array(inter_union_distance_ec).mean(axis=0)
-                # print(np.shape(inter_union_distance_ec), inter_union_distance_ec.dtype)
-                inter_union_distance_ec = inter_union_distance_ec.reshape(128, 128, 128)
-            
+                print("----------Mean and SD---------", inter_union_all_ec_mean, inter_union_all_ec_sd)
 
         filename = f"all_method_ec_subject_{subject}.npz"
         outfile = TEST_PREDICTION / filename
         np.savez(outfile, ratio=ratio_ec, ratio_diff=ratio_diff_ec, ratio_sign=ratio_sign_ec, ratio_diff_sign=ratio_diff_sign_ec,
-        inter_union_vox=inter_union_vox_ec, inter_union_distance=inter_union_distance_ec, 
-        inter_union_all_ec_mean=inter_union_all_ec_mean, inter_union_all_ec_sd=inter_union_all_ec_sd)
+        inter_union_vox=inter_union_vox_ec, inter_union_all_ec_mean=inter_union_all_ec_mean, inter_union_all_ec_sd=inter_union_all_ec_sd)
         duration = time.time() - start
         print("Time in seconds   ", duration)
