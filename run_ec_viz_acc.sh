@@ -8,7 +8,7 @@
 #SBATCH --mail-type=ALL
 
 module load python/3.8 cuda cudnn
-SOURCEDIR=/home/x2020fpt/home/
+# SOURCEDIR=/home/x2020fpt/home/
 
 # Prepare virtualenv
 source /home/x2020fpt/scratch/.venv/bin/activate && echo "$(date +"%T"):  Activated python virtualenv"
@@ -18,15 +18,15 @@ source /home/x2020fpt/scratch/.venv/bin/activate && echo "$(date +"%T"):  Activa
 
 echo -e '\n\n\n'
 echo "$(date +"%T"):  start Collecting all residuals, saving them subjectwise and calculating EC subject wise and saving them!"
-python3 /home/x2020fpt/home/rUnet_CC/project/calculate_ec.py \
+python3 /home/x2020fpt/scratch/rUnet_CC/project/calculate_ec.py \
 echo "$(date +"%T"):  Finished running!"
 
 echo -e '\n\n\n'
 echo "$(date +"%T"):  Ploatting Parametric map images for middle part only!"
-python3 /home/x2020fpt/home/rUnet_CC/project/visualize_ec.py \
+python3 /home/x2020fpt/scratch/rUnet_CC/project/visualize_ec.py \
 echo "$(date +"%T"):  Finished running!"
 
 echo -e '\n\n\n'
 echo "$(date +"%T"): calculating Accuracy (Mean, Std) and saving them!"
-python3 /home/x2020fpt/home/rUnet_CC/project/calculate_accuracy.py \
+python3 /home/x2020fpt/scratch/rUnet_CC/project/calculate_accuracy.py \
 echo "$(date +"%T"):  Finished running!"
