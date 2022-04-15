@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --account=def-jlevman
-#SBATCH --mem=180G  # memory
+#SBATCH --mem=150G  # memory
 #SBATCH --cpus-per-task=08
 #SBATCH --output=runet-%j.out  # %N for node name, %j for jobID
-#SBATCH --time=00-12:00     # time (DD-HH:MM)
+#SBATCH --time=00-18:00     # time (DD-HH:MM)
 #SBATCH --mail-user=x2020fpt@stfx.ca # used to send emails
 #SBATCH --mail-type=ALL
 
@@ -22,7 +22,7 @@ python3 /home/x2020fpt/home/rUnet_CC/project/calculate_ec.py \
 echo "$(date +"%T"):  Finished running!"
 
 echo -e '\n\n\n'
-echo "$(date +"%T"):  Ploatting Parametric map images!"
+echo "$(date +"%T"):  Ploatting Parametric map images for middle part only!"
 python3 /home/x2020fpt/home/rUnet_CC/project/visualize_ec.py \
 echo "$(date +"%T"):  Finished running!"
 

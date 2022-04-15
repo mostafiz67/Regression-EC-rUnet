@@ -7,7 +7,6 @@ from itertools import combinations
 import time
 
 from utils.const import ECMethod, TEST_PREDICTION
-# from utils.visualize_3 import log_all_info
 
 def regression_ec(residuals: List[ndarray], method: ECMethod) -> List[ndarray]:
     filterwarnings("ignore", "invalid value encountered in true_divide", category=RuntimeWarning)
@@ -16,7 +15,7 @@ def regression_ec(residuals: List[ndarray], method: ECMethod) -> List[ndarray]:
     for pair in combinations(residuals, 2):
         r1, r2 = pair
         count+=1
-        print("--------------Method Count-------------------", method, count)
+        # print("--------------Method Count-------------------", method, count)
         r = np.vstack(pair)
         sign = np.sign(np.array(r1) * np.array(r2))
         if method == "ratio-signed":
@@ -78,16 +77,17 @@ if __name__ == "__main__":
         np.savez(outfile, all_residual=all_rep_residuals)
 
 
-    # Calcullating EC using different methods for subject wise
+    # Calculating EC using different methods for subject wise
     for subject in range(0, 7):
         # Reading all_residual_bat_1_test.npz file (dictionaly key = all_residual)
         filename = f"all_rep_residuals_bat_{subject}_test.npz"
         outfile = TEST_PREDICTION / filename
         data = np.load(outfile)
         all_rep_residuals = data["all_residual"]
-        print(np.shape(all_rep_residuals))
+        # print(np.shape(all_rep_residuals))
 
-        for method in ["intersection_union_voxel", "intersection_union_all", "ratio", "ratio-diff", "ratio-signed", "ratio-diff-signed", "intersection_union_distance"]:
+        for method in ["intersection_union_distance", "intersection_union_voxel", "intersection_union_all", 
+                        "ratio", "ratio-diff", "ratio-signed", "ratio-diff-signed", ]:
             if method == "ratio":
                 ratio_ec = regression_ec(all_rep_residuals, 'ratio')
                 ratio_ec = np.array(ratio_ec).mean(axis=0)
@@ -118,17 +118,16 @@ if __name__ == "__main__":
                 inter_union_all_ec_sd = np.array(inter_union_all_ec).std(ddof=1)
                 # print("----------Mean and SD---------", inter_union_all_ec_mean, inter_union_all_ec_sd)
             elif method == "intersection_union_distance":
-                inter_union_distance_ec = regression_ec(all_rep_residuals, 'intersection_union_voxel')
+                inter_union_distance_ec = regression_ec(all_rep_residuals, 'intersection_union_distance')
                 inter_union_distance_ec = np.array(inter_union_distance_ec, dtype=np.float32)
                 inter_union_distance_ec = np.array(inter_union_distance_ec).mean(axis=0)
-                # print(np.shape(inter_union_distance_ec), inter_union_distance_ec.dtype)
                 inter_union_distance_ec = inter_union_distance_ec.reshape(128, 128, 128)
             
 
         filename = f"all_method_ec_subject_{subject}.npz"
         outfile = TEST_PREDICTION / filename
         np.savez(outfile, ratio=ratio_ec, ratio_diff=ratio_diff_ec, ratio_sign=ratio_sign_ec, ratio_diff_sign=ratio_diff_sign_ec,
-        inter_union_vox=inter_union_vox_ec, inter_union_distance=inter_union_distance_ec, 
-        inter_union_all_ec_mean=inter_union_all_ec_mean, inter_union_all_ec_sd=inter_union_all_ec_sd)
+                inter_union_vox=inter_union_vox_ec, inter_union_distance=inter_union_distance_ec, 
+                inter_union_all_ec_mean=inter_union_all_ec_mean, inter_union_all_ec_sd=inter_union_all_ec_sd)
         duration = time.time() - start
         print("Time in seconds   ", duration)

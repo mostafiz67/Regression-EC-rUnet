@@ -184,6 +184,6 @@ if __name__ == "__main__":
             ratio_sign_ec_data = data['ratio_sign']
             ratio_diff_sign_ec_data = data['ratio_diff_sign']
             inter_union_vox_ec_data = data['inter_union_vox']
-            inter_union_distance_ec_data = data['inter_union_vox'] # change to "inter_union_distance"
+            inter_union_distance_ec_data = data['inter_union_distance'] # change to "inter_union_distance"
         generate_fig(ratio_ec_data, ratio_diff_ec_data, ratio_sign_ec_data, ratio_diff_sign_ec_data, 
                     inter_union_vox_ec_data, inter_union_distance_ec_data, subject=subject)
