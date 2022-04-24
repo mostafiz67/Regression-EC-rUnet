@@ -59,15 +59,10 @@ class BrainSlices:
         # 
 
     def get_slice(self, input: ndarray, i: int, j: int, k: int) -> List[Tuple[ndarray, ...]]:
-        # return [
-        #     np.fliplr((input[i // 2, ...], input[i, ...], input[i + i // 2, ...])),
-        #     np.fliplr((input[:, j // 2, ...], input[:, j, ...], input[:, j + j // 2, ...])),
-        #     np.fliplr((input[:, :, k // 2, ...], input[:, :, k, ...], input[:, :, k + k // 2, ...])),
-        # ]
         return [
-            np.fliplr(((input[i, ...]))),
-            np.fliplr(( input[:, j, ...])),
-            np.fliplr(( input[:, :, k, ...])),
+            np.flipud(np.fliplr((input[i, ...]))),
+            np.flipud(np.fliplr(( input[:, j, ...]))),
+            np.flipud(np.fliplr(( input[:, :, k, ...]))),
         ]
 
     def plot(self) -> Figure:
