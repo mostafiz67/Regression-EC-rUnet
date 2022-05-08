@@ -60,15 +60,15 @@ class BrainSlices:
 
     def get_slice(self, input: ndarray, i: int, j: int, k: int) -> List[Tuple[ndarray, ...]]:
         return [
-            np.fliplr((input[i // 2, ...], input[i, ...], input[i + i // 2, ...])),
-            np.fliplr((input[:, j // 2, ...], input[:, j, ...], input[:, j + j // 2, ...])),
-            np.fliplr((input[:, :, k // 2, ...], input[:, :, k, ...], input[:, :, k + k // 2, ...])),
+            np.flipud(np.fliplr((input[i // 2, ...], input[i, ...], input[i + i // 2, ...]))),
+            np.flipud(np.fliplr((input[:, j // 2, ...], input[:, j, ...], input[:, j + j // 2, ...]))),
+            np.flipud(np.fliplr((input[:, :, k // 2, ...], input[:, :, k, ...], input[:, :, k + k // 2, ...]))),
         ]
 
 
     def plot(self) -> Figure:
         nrows, ncols = len(self.slices), 3  # one row for each slice position
-        fig = plt.figure(figsize=(20, 15)) # fig = plt.figure(figsize=(13, 10))
+        fig = plt.figure(figsize=(14, 10)) # fig = plt.figure(figsize=(13, 10))
         gs = gridspec.GridSpec(nrows, ncols)
 
         for i in range(0, nrows):
@@ -92,31 +92,31 @@ class BrainSlices:
                     axis.set_title(self.title[5])
             cm = plt.get_cmap('bone')
             if i ==0:
-                plt.subplots_adjust(bottom=0., right=0.92, top=1.)
-                cax = plt.axes([0.98, 0.82, 0.010, 0.11]) #[left, bottom, width, height]
+                # plt.subplots_adjust(bottom=0., right=0.95, top=1.)
+                cax = plt.axes([0.95, 0.82, 0.010, 0.11]) #[left, bottom, width, height]
                 sm = plt.cm.ScalarMappable(cmap=cm, norm=plt.Normalize(vmin=self.imax1, vmax=self.imin1))
                 cbar=plt.colorbar(sm,cax)
             elif i==1:
-                cax = plt.axes([0.98, 0.67, 0.010, 0.11])
+                cax = plt.axes([0.95, 0.67, 0.010, 0.11])
                 sm = plt.cm.ScalarMappable(cmap=cm, norm=plt.Normalize(vmin=self.imax2, vmax=self.imin2))
                 cbar=plt.colorbar(sm,cax)
             elif i==2:
-                cax = plt.axes([0.98, 0.51, 0.010, 0.11])
+                cax = plt.axes([0.95, 0.51, 0.010, 0.11])
                 sm = plt.cm.ScalarMappable(cmap=cm, norm=plt.Normalize(vmin=self.imax3, vmax=self.imin3))
                 cbar=plt.colorbar(sm,cax)
             elif i==3:
-                cax = plt.axes([0.98, 0.35, 0.010, 0.11])
+                cax = plt.axes([0.95, 0.35, 0.010, 0.11])
                 sm = plt.cm.ScalarMappable(cmap=cm, norm=plt.Normalize(vmin=self.imax4, vmax=self.imin4))
                 cbar=plt.colorbar(sm,cax)
             elif i==4:
-                cax = plt.axes([0.98, 0.20, 0.010, 0.11])
+                cax = plt.axes([0.95, 0.20, 0.010, 0.11])
                 sm = plt.cm.ScalarMappable(cmap=cm, norm=plt.Normalize(vmin=self.imax5, vmax=self.imin5))
                 cbar=plt.colorbar(sm,cax)
             elif i==5:
-                cax = plt.axes([0.98, 0.06, 0.010, 0.11])
+                cax = plt.axes([0.95, 0.06, 0.010, 0.11])
                 sm = plt.cm.ScalarMappable(cmap=cm, norm=plt.Normalize(vmin=self.imax6, vmax=self.imin6))
                 cbar=plt.colorbar(sm,cax)
-        plt.tight_layout(pad=3,h_pad=0.0, w_pad=0.0001) # plt.tight_layout(pad=3, h_pad=0.0, w_pad=0.1)
+        plt.tight_layout(pad=3,h_pad=0.0, w_pad=0.01) # plt.tight_layout(pad=3, h_pad=0.0, w_pad=0.1)
         # plt.imshow(fig)
         
         fig.suptitle(f'Parametric map images from EC metrics (Subject-{self.subject+1})', fontsize=16)
@@ -132,8 +132,8 @@ class BrainSlices:
             axis.invert_yaxis()
             axis.set_xticks([])
             axis.set_yticks([])
-            axis.set_xticklabels([])
-            axis.set_yticklabels([])
+            # axis.set_xticklabels([])
+            # axis.set_yticklabels([])
 
 
 def generate_fig(
@@ -157,14 +157,14 @@ def generate_fig(
 
     fig = brainSlice.plot()
 
-    filename = f"ec_method_image_sub_{subject+1}_raw.png"
+    filename = f"ec_method_image_sub_{subject+1}_raw_all_parts.png"
     outfile = PARAMETRIC_MAP / "all_part" / filename
     fig.savefig(outfile, format='png')
-    filename = f'ec_method_image_sub_{subject+1}_raw.pdf'
+    filename = f'ec_method_image_sub_{subject+1}_raw_all_parts.pdf'
     outfile = PARAMETRIC_MAP / "all_part" / filename
     fig.savefig(outfile, dpi=120, format='pdf', bbox_inches='tight')
     
-    fig.subplots_adjust(right=0.8, top=None, wspace=None, hspace=None)
+    fig.subplots_adjust(right=0.8)
     plt.close()
 
 
