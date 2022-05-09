@@ -54,8 +54,8 @@ class BrainSlices:
         "Ratio-diff",
         "Ratio-signed",
         "Ratio-diff-signed",
-        "Intersection-Union",
-        "Intersection-Union-Distance"]
+        "Intersection-union-voxel",
+        "Intersection-union-distance"]
         # 
 
     def get_slice(self, input: ndarray, i: int, j: int, k: int) -> List[Tuple[ndarray, ...]]:
