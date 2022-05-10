@@ -68,7 +68,7 @@ class BrainSlices:
 
     def plot(self) -> Figure:
         nrows, ncols = len(self.slices), 3  # one row for each slice position
-        fig = plt.figure(figsize=(14, 10)) # fig = plt.figure(figsize=(13, 10))
+        fig = plt.figure(figsize=(14, 12)) # fig = plt.figure(figsize=(13, 10))
         gs = gridspec.GridSpec(nrows, ncols)
 
         for i in range(0, nrows):
