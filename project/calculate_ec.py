@@ -1,3 +1,7 @@
+"""
+Some code is inherited from https://stackoverflow.com/questions/71430032/how-to-compare-two-numpy-arrays-with-multiple-condition
+"""
+
 import numpy as np
 import pandas as pd
 from typing import Any, Dict, List, Tuple
