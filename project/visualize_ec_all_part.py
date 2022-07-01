@@ -68,7 +68,7 @@ class BrainSlices:
 
     def plot(self) -> Figure:
         nrows, ncols = len(self.slices), 3  # one row for each slice position
-        fig = plt.figure(figsize=(14, 12)) # fig = plt.figure(figsize=(13, 10))
+        fig = plt.figure(figsize=(11, 10)) # fig = plt.figure(figsize=(13, 10))
         gs = gridspec.GridSpec(nrows, ncols)
 
         for i in range(0, nrows):
@@ -126,7 +126,7 @@ class BrainSlices:
         for (slice_, axis) in zip(slices, axes):
             imgs = [img for img in slice_]
             imgs = np.concatenate(imgs, axis=1)
-            axis.imshow(imgs, cmap="bone", alpha=0.8, vmin=0, vmax=255) # If raw then vmax=1; if scaled then vmax=255
+            axis.imshow(imgs, cmap="bone", alpha=0.8, vmin=0, vmax=255, extent=(-0.5, 2-0.5, 0.2, -0.5)) # If raw then vmax=1; if scaled then vmax=255
             axis.grid(False)
             axis.invert_xaxis()
             axis.invert_yaxis()
@@ -164,7 +164,7 @@ def generate_fig(
     outfile = PARAMETRIC_MAP / "all_part" / filename
     fig.savefig(outfile, dpi=120, format='pdf', bbox_inches='tight')
     
-    fig.subplots_adjust(right=0.8)
+    fig.subplots_adjust(right=0.8, top=None, wspace=None, hspace=None)
     plt.close()
 
 

@@ -66,7 +66,8 @@ class LitModelLongitudinal(pl.LightningModule):
         inputs, targets = batch
         logits = self(inputs)
         loss = self.criterion(logits.view(-1), targets.view(-1))
-        residuals = targets[0] - logits[0]
+        # residuals = targets[0] - logits[0]
+        residuals = logits[0] - targets[0]
 
         if self.current_epoch % 75 == 0 and batch_idx == 0:
             log_all_info(
@@ -111,7 +112,8 @@ class LitModelLongitudinal(pl.LightningModule):
         logits = self(inputs)
         loss = self.criterion(logits.view(-1), targets.view(-1))
         self.log("val_loss", loss, sync_dist=True, on_step=True, on_epoch=True, prog_bar=True)
-        residuals = targets[0] - logits[0]
+        # residuals = targets[0] - logits[0]
+        residuals = logits[0] - targets[0]
 
         if self.current_epoch % 75 == 0 and batch_idx == 0:
             log_all_info(
@@ -181,7 +183,8 @@ class LitModelLongitudinal(pl.LightningModule):
         inputs, targets = batch
         logits = self(inputs)
         loss = self.criterion(logits.view(-1), targets.view(-1))
-        residuals = targets[0]- logits[0]
+        # residuals = targets[0]- logits[0]
+        residuals = logits[0] - targets[0]
         if batch_idx <= 8:
             log_all_info(
                 module=self,

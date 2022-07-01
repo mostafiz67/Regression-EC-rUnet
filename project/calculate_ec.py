@@ -73,8 +73,11 @@ if __name__ == "__main__":
                 filename = f"k_{k_fold}_rep_{rep}_bat_{subject}_test.npz" 
                 outfile = TEST_PREDICTION / filename
                 data = np.load(outfile)
-                data_reshape = data['residual'].reshape(-1)
-                all_rep_residuals.append(data_reshape)
+                # data_residula = data['residual'].reshape(-1)
+                data_target = data['target'].reshape(-1)
+                data_predicts = data['predict'].reshape(-1)
+                data_residula = data_predicts - data_target
+                all_rep_residuals.append(data_residula)
         print("Shape of the all repated residuals of the same target image", np.shape(all_rep_residuals))
         filename = f"all_rep_residuals_bat_{subject}_test.npz"
         outfile = TEST_PREDICTION / filename
